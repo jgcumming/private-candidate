@@ -46,7 +46,7 @@
         <email>rowills@cisco.com</email>
       </address>
     </author>
-    <date year="2024" month="07" day="02"/>
+    <date year="2024"/>
     <!-- On draft subbmission:
          * If only the current year is specified, the current day and month will be used.
          * If the month and year are both specified and are the current ones, the current day will
@@ -119,14 +119,6 @@
           describe how they work with a private candidate datastore.  These
           updates are described in
           <xref target="section_updated_netconf_operations"/>.</t>
-      </section>
-      <section>
-        <name>Updates to RFC 8342</name>
-        <t>This document updates <xref target="RFC8342"/> to show how the
-          private candidate datastore relates to other datastores.  This is
-          shown in <xref target="section_private_candidate_datastore"/>.</t>
-	<t>Specifially, NMDA is updated to add additional writeable
-	  configuration datastores called private candidates.</t>
       </section>
       <section>
         <name>Updates to RFC 9144</name>
@@ -308,105 +300,44 @@
           <sourcecode>
 urn:ietf:params:netconf:capability:private-candidate:1.0
           </sourcecode>
-          <t>A server may also advertise the :candidate capability as defined in
-          <xref target="RFC6241"/> if the shared candidate is also supported.</t>
-          <t>A non-NMDA capable NETCONF server that advertises the :private-candidate
-          capability MUST also advertise the :candidate capability.</t>
+          <t>As support for the shared candidate configuration datastore is a 
+          pre-requisite for the private candidate functionlity, a server MUST also 
+          advertise the :candidate capability as defined in <xref target="RFC6241"/>.</t>
         </section>
         <section>
           <name>NETCONF client</name>
           <t>In order to utilise a private candidate configuration within a NETCONF
 	    session, the client must inform the server that it wishes to do this.</t>
-          <t>Two approaches are available for a NETCONF client to signal that it wants
-            to use a private candidate:</t>
-          <section>
-            <name>Client capability declaration</name>
-            <t>When a NETCONF client connects with a server it sends a list of client
-            capabilities including one of the :base NETCONF version capabilties.</t>
-            <t>In order to enable private candidate mode for the duration of the NETCONF
-            client session the NETCONF client sends the following capability:</t>
-            <sourcecode>
+          <t>When a NETCONF client connects with a server it sends a list of client
+          capabilities including one of the :base NETCONF version capabilties.</t>
+          <t>In order to enable private candidate mode for the duration of the NETCONF
+          client session the NETCONF client sends the following capability:</t>
+          <sourcecode>
 urn:ietf:params:netconf:capability:private-candidate:1.0
-            </sourcecode>
-            <t>In order for the use of private candidates to be established using this
-            approach both the NETCONF server and the NETCONF client MUST advertise 
-            this capability.</t>
-            <t>When a server receives the client capability its mode of operation
-             will be set to private candidate mode for the duration of the NETCONF
-             session.</t>
-            <t>All RPC requests that target the candidate configuration datastore
-            will operate in exactly the same way as they would do when using the
-            shared candidate configuration datastore, however, when the server
-            receives a request to act upon the candidate configuration datastore it
-            instead uses the session's private candidate configuration datastore.</t>
-            <t>Using this method, the use of private candidates can be made available 
-            to NMDA and non-NMDA capable servers.</t>
-            <t>No protocol extensions are required for the transitioning of candidates between
-            the shared mode and the private mode and no extensions are required for any
-            RPCs (including &lt;lock&gt;)</t>
-          </section>
-          <section anchor="section_private_candidate_datastore">
-            <name>Private candidate datastore</name>
-            <t>The private candidate configuration datastore is exposed as its
-             own datastore similar to other <xref target="RFC8342">NMDA</xref>
-             capable datastores.  This datastore is called private-candidate.</t>
-<artwork><![CDATA[
-
-+-------------+                 +-----------+       +---------------------+
-| <candidate> |                 | <startup> |       | <private-candidate> |-+
-|  (ct, rw)   |<---+       +--->| (ct, rw)  |    +->|     (ct, rw)        | |-+
-+-------------+    |       |    +-----------+    |  +---------------------+ | |
-      |           |       |           |         |    +----------------------+ | 
-      |         +-----------+<--------+         |      +----------------------+  
-      +-------->| <running> |                   |            |  // multiple
-                | (ct, rw)  |-------------------+            |  // private-candidates
-                +-----------+<-------------------------------+  // possible
-                      |
-                      |        // configuration transformations,
-                      |        // e.g., removal of nodes marked as
-                      |        // "inactive", expansion of
-                      |        // templates
-                      v
-                +------------+
-                | <intended> | // subject to validation
-                | (ct, ro)   |
-                +------------+
-                      |        // changes applied, subject to
-                      |        // local factors, e.g., missing
-                      |        // resources, delays
-                      |
-  dynamic              |   +-------- learned configuration
-  configuration        |   +-------- system configuration
-  datastores -----+    |   +-------- default configuration
-                  |    |   |
-                  v    v   v
-              +---------------+
-              | <operational> | <-- system state
-              | (ct + cf, ro) |
-              +---------------+
-
-ct = config true; cf = config false
-rw = read-write; ro = read-only
-boxes denote named datastores
-]]>
-</artwork>
-
-            <t>All NMDA operations that support candidate NMDA datastore SHOULD
-            support the private-candidate datastore.</t>
-            <t>Any non-NMDA aware NETCONF operations that take a source or target
-             (destination) may be extended to accept the new datastore.</t>
-            <t>The ability for the server to support private candidates is optional
-            and SHOULD be signalled in NMDA supporting servers as a datastore in addition
-            to the server capabilities described earlier in this document.</t>
-            <t>To use this method the client is not required to send the
-            :private-candidate capability.</t>
-            <t>The first datastore referenced (either candidate or private-candidate) in
-             any NETCONF operation will define which mode that NETCONF session will
-             operate in for its duration.  As an example, performing a &lt;get-data&gt;
-             operation on the private-candidate datastore will switch the session into
-             private candidate configuration mode and subsequent &lt;edit-config&gt;
-             operations that reference the candidate configuration datastore MUST fail.</t>
-          </section>
+          </sourcecode>
+          <t>In order for the use of private candidates to be established using this
+          approach both the NETCONF server and the NETCONF client MUST advertise 
+          this capability.</t>
+          <t>If a client sends the capability and the server does not support private
+          candidates, the server MUST choose one of the following options:</t>
+          <ul>
+          <li>Ignore the capability and continue with the session without the use of 
+          private candidates (this ensures backwards compatibility with older clients)</li>
+          <li>Close the session as the requested functionality cannot be provided.</li>
+          </ul>
+          <t>When a server receives the client capability its mode of operation
+          will be set to private candidate mode for the duration of the NETCONF
+          session.</t>
+          <t>All RPC requests that target the candidate configuration datastore
+          will operate in exactly the same way as they would do when using the
+          shared candidate configuration datastore, however, when the server
+          receives a request to act upon the candidate configuration datastore it
+          instead uses the session's private candidate configuration datastore.</t>
+          <t>Using this method, the use of private candidates can be made available 
+          to NMDA and non-NMDA capable servers.</t>
+          <t>No protocol extensions are required for the transitioning of candidates 
+          between the shared mode and the private mode and no extensions are required 
+          for any RPCs (including &lt;lock&gt;).</t>
         </section>
         <section>
           <name>RESTCONF client</name>
@@ -426,6 +357,7 @@ boxes denote named datastores
          private candidates, because those clients will expect their changes to be
          committed immediately.</t>
       </section>
+      <!-- TODO: Check whether this section is needed now
       <section>
         <name>Private candidate datastore is referenced in the request</name>
 	    <t>When the private-candidate datastore is explicitly referenced as an NMDA datastore,
@@ -438,6 +370,7 @@ boxes denote named datastores
          ietf-netconf:validate, and ietf-netconf:cancel-commit operations (if the appropriate
          capabilities are implemented).  The semantics are identical to NETCONF.</t>
       </section>
+      -->
       <section>
         <name>Identifying the private candidate datastore</name>
         <t>Each RESTCONF client has its own private candidate datastore.  The client
@@ -497,7 +430,7 @@ boxes denote named datastores
         operation</li>
         <li>&lt;commit&gt; is issued (which MUST automatically issue an &lt;update&gt; operation 
         immediately prior to committing the configuration)</li>
-        <li>An implmentation chooses to perform an &lt;update&gt; operation after a change to
+        <li>An implementation chooses to perform an &lt;update&gt; operation after a change to
         the running configuration by any other client</li>
         </ul>
         <t>It is possible for a private candidate configuration to become significantly out of 
@@ -505,10 +438,11 @@ boxes denote named datastores
         however, most NETCONF configuration activities (between the first 
         &lt;edit-config&gt;/&lt;edit-data&gt; and a &lt;commit&gt;) are short-lived.</t>
         <t>An implementation may choose, optionally, to automatically perform an &lt;update&gt; 
-        operation after a change to the running configuration from another client.  However, this
-        choice should be made with caution as it will replace, overwrite, or otherwise alter 
-        (depending on the servers default resolution mode, discussed later) the private candidate
-        configuration without notifying the client.</t>
+        operation automatically on each private candidate configuration datastore after a 
+        change to the running configuration from another client.  However, this choice should 
+        be made with caution as it will replace, overwrite, or otherwise alter (depending on 
+        the servers default resolution mode, discussed later) the private candidate configuration
+        without notifying the client.</t>
         <t>A &lt;compare&gt; operation MAY be performed against:</t>
         <ul>
         <li>The initial creation point of the private candidate's branch</li>
@@ -1149,7 +1083,6 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.2119.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8174.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.6241.xml"/>
-        <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8342.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.9144.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.5717.xml"/>
         <xi:include href="https://www.rfc-editor.org/refs/bibxml/reference.RFC.8040.xml"/>
