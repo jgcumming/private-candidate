@@ -3,14 +3,6 @@ module ietf-netconf-private-candidate {
     namespace "urn:ietf:params:xml:ns:netconf:private-candidate:1.0";
     prefix pc;
 
-    // import ietf-netconf {
-    //     prefix nc;
-    // }
-
-    // import ietf-datastores {
-    //     prefix ds;
-    // }
-
     import ietf-nmda-compare {
         prefix cmp;
     }
@@ -53,7 +45,8 @@ module ietf-netconf-private-candidate {
         description
             "Introduce private candidate support";
         reference
-            "draft-ietf-netconf-privcand: Netconf Private Candidates";
+            "draft-ietf-netconf-privcand: 
+             Netconf Private Candidates";
     }    
 
     feature private-candidate {
@@ -66,117 +59,6 @@ module ietf-netconf-private-candidate {
         reference
             "draft-ietf-netconf-privcand";
     }
-
-    // augment /nc:get-config/nc:input/nc:source/nc:config-source {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //           "The private candidate configuration is the config
-    //            source.";
-    //       }
-    // }
-
-    // augment /nc:edit-config/nc:input/nc:target/nc:config-target {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //           "The private candidate configuration is the config
-    //            target.";
-    //       }
-    // }
-
-    // augment /nc:copy-config/nc:input/nc:target/nc:config-target {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //                 "The private candidate configuration is the config
-    //                 target.";
-    //     }
-    // }
-
-    // augment /nc:copy-config/nc:input/nc:source/nc:config-source {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //             "The private candidate configuration is the config
-    //             source.";
-    //     }
-    // }
-
-    // augment /nc:delete-config/nc:input/nc:target/nc:config-target {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //             "The private candidate configuration is the config
-    //             target.";
-    //     }
-    // }
-
-
-    // augment /nc:lock/nc:input/nc:target/nc:config-target {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //             "The private candidate configuration is the config
-    //             target.";
-    //     }
-    // }
-
-    // augment /nc:unlock/nc:input/nc:target/nc:config-target {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //             "The private candidate configuration is the config
-    //             target.";
-    //     }
-    // }
-    
-    // augment /nc:commit/nc:input {
-    //     container source {
-    //         description
-    //             "Particular configuration to copy from.";
-    //         choice config-source {
-    //             mandatory true;
-    //             description
-    //                 "The configuration source for the copy operation.";
-    //             leaf candidate {
-    //                 if-feature "nc:candidate";
-    //                 type empty;
-    //                 description
-    //                     "The candidate configuration is the config source.";
-    //             }
-    //             leaf private-candidate {
-    //                 if-feature "private-candidate";
-    //                 type empty;
-    //                 description
-    //                     "The private candidate configuration is the config
-    //                     source.";
-    //             }
-    //         }
-    //     }
-    // }
-
-    // augment /nc:discard-changes/nc:input {
-    //     container target {
-    //         choice config-target {
-    //             mandatory true;
-    //             leaf private-candidate {
-    //                 if-feature "private-candidate";
-    //                 type empty;
-    //                 description
-    //                     "The private candidate configuration is the config
-    //                     target.";
-    //             }
-    //         }
-    //     }
-    // }
 
     rpc update {
         if-feature "private-candidate";
@@ -199,22 +81,6 @@ module ietf-netconf-private-candidate {
             }
         }
     }
-
-    // augment /nc:validate/nc:input/nc:source/nc:config-source {
-    //     leaf private-candidate {
-    //         if-feature "private-candidate";
-    //         type empty;
-    //         description
-    //             "The private candidate configuration is the config
-    //             source.";
-    //     }
-    // }
-
-    // identity private-candidate {
-    //     base ds:conventional;
-    //     description
-    //         "The private candidate configuration datastore.";
-    // }
 
     augment /cmp:compare/cmp:input {
         leaf reference-point {
