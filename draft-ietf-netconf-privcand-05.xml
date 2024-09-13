@@ -567,7 +567,8 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           <t>The example workflow is shown in this diagram and is used for the purpose 
           of the examples below.  In these examples the reader should assume that the
           &lt;update&gt; operation is manually provided by a client working in 
-          private candidate 1.</t>
+          private candidate 1.  The update operation triggered by a system upon
+          commit is not shown.</t>
           <artwork>
                         update commit
        +--------------------+---+------&gt; private candidate 1
