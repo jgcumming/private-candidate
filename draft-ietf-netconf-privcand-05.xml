@@ -88,9 +88,9 @@
 		 no other client may make any changes until that lock is released.  This behaviour
 		 is, in many situations, also undesirable.  <br/><br/>
 
-		 Many network devices already support private candidate configurations,
-		 where a user (machine or otherwise) is able to edit a personal copy of a device's
-		 configuration without blocking other users from doing so.<br/><br/>
+		 Many network devices support candidate configurations within the CLI interface, 
+     where a user (machine or otherwise) is able to edit a personal copy of a device's 
+     configuration without blocking other users from doing so.<br/><br/>
 	 
 	     This document details the extensions to the NETCONF protocol in order to support
 	     the use of private candidates.  It also describes how the RESTCONF protocol can be
@@ -106,18 +106,17 @@
       </section>
       <section>
         <name>Updates to RFC 6241 and RFC 8526</name>
-        <t>This document updates <xref target="RFC6241"/> to augment the
-          NETCONF &lt;edit-config&gt;, &lt;copy-config&gt;, &lt;get-config&gt;,
-          &lt;commit&gt;, &lt;lock&gt; and &lt;unlock&gt; operations to
-          describe how they work with a private candidate datastore.  These
-          updates are described in
+        <t>This document updates <xref target="RFC6241"/> to describe how 
+          the &lt;edit-config&gt;, &lt;copy-config&gt;, &lt;get-config&gt;,
+          &lt;commit&gt;, &lt;delete-config&gt;, &lt;discard-changes&gt;,
+          &lt;lock&gt; and &lt;unlock&gt; operations work with a private 
+          candidate datastore.  These updates are described in
           <xref target="section_updated_netconf_operations"/>.  This
-	  document also adds a new &lt;update&gt; operation, described in
-	  <xref target="section_new_netconf_operations"/>.</t>
-        <t>This document also updates <xref target="RFC8526"/> to augment the
-          NETCONF &lt;edit-data&gt; and &lt;get-data&gt; operations to
-          describe how they work with a private candidate datastore.  These
-          updates are described in
+	        document also adds a new &lt;update&gt; operation, described in
+	        <xref target="section_new_netconf_operations"/>.</t>
+        <t>This document also updates <xref target="RFC8526"/> to describe 
+          how the &lt;edit-data&gt; and &lt;get-data&gt; operations work 
+          with a private candidate datastore.  These updates are described in
           <xref target="section_updated_netconf_operations"/>.</t>
       </section>
       <section>
