@@ -323,7 +323,7 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           candidates, the server MUST choose one of the following options:</t>
           <ul>
           <li>Ignore the capability and continue with the session without the use of 
-          private candidates (this ensures backwards compatibility with older clients)</li>
+          private candidates (this ensures backwards compatibility with older servers).</li>
           <li>Close the session as the requested functionality cannot be provided.</li>
           </ul>
           <t>When a server receives the client capability its mode of operation
@@ -336,13 +336,10 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           instead uses the session's private candidate configuration datastore.</t>
           <t>Using this method, the use of private candidates can be made available 
           to NMDA and non-NMDA capable servers.</t>
-          <t>No protocol extensions are required for the transitioning of candidates 
-          between the shared mode and the private mode and no extensions are required 
-          for any RPCs (including &lt;lock&gt;).</t>
         </section>
         <section>
           <name>RESTCONF client</name>
-	  <t>RESTCONF doesn't provide a mechanism for the client to advertise a capability.
+	  <t>RESTCONF does not provide a mechanism for the client to advertise a capability.
     Therefore when a RESTCONF server advertises the :private-candidate capability, the
     decision of whether to use a private candidate depends on whether a datastore is
     explicitly referenced in the request using the RESTCONF extensions for NMDA
@@ -521,11 +518,13 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           automatic depending on the server and client decision (discussed later in 
           this document).</li>
           <li>A &lt;commit&gt; operation (that MUST trigger an automatic &lt;update&gt; 
-          operation immediately before) MUST fail. It MUST inform the client of the 
+          operation immediately before) MUST fail irrespective of any system-wide 
+          default resolution-mode. It MUST inform the client of the 
           conflict and SHOULD detail the location of the conflict(s).</li>
-          <li>A &lt;update&gt; operation MUST fail unless the server has explicitly 
-          configured a system-wide system resolution mode of ignore or overwrite
-          (discussed later in this document)</li>
+          <li>An &lt;update&gt; operation triggered by a client (excluding 
+          updates triggered by the &lt;commit&gt; operation) MUST fail unless the 
+          server has explicitly configured a system-wide resolution-mode of ignore 
+          or overwrite (discussed later in this document)</li>
           </ul>
           <t>The location of the conflict(s) should be reported as a list of
           xpaths and values.</t>
@@ -896,7 +895,7 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
             MUST be to issue the implicit &lt;update&gt; operation first and then the 
             &lt;commit&gt; operation.</t>
             <t>A &lt;commit&gt; operation that fails the implicit &lt;update&gt; operation
-            SHOULD fail.  The client is then required to make a specific decision to rectify
+            MUST fail.  The client is then required to make a specific decision to rectify
             the issue prior to committing.  This may be to edit the private candidate 
             configuration or to issue a manual &lt;update&gt; operation with a specific
             resolution mode selected.</t>
@@ -916,21 +915,54 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
         </section>
         <section anchor="section_updated_netconf_operations">
           <name>Updated NETCONF operations</name>
-          <t>Specific NETCONF operations altered by this document are listed in this section.
-            Any notable behaviour with existing unaltered NETCONF operations is noted in the
-            appendix.</t>
+          <t>Specific NETCONF operations altered by this document are listed in this 
+          section.</t>
           <section anchor="section_updates_to_commit">
             <name>&lt;commit&gt;</name>
             <t>The behaviour of the &lt;commit&gt; operation is updated such that
-            the issuing a &lt;commit&gt; follows a two step process in order to copy the 
-            proposed private configuration into the running configuration.  These steps
-            are:</t>
+            the issuing a &lt;commit&gt; MUST follow a two step process in order to 
+            copy the proposed private configuration into the running configuration.  
+            These steps are:</t>
             <ol>
-              <li>An implicit update operation is performed by the server using the
+              <li>An implicit update operation MUST be performed by the server using the
               resolution-mode revert-on-conflict (described later in this document).</li>
-              <li>The private candidate configuration is copied into the running 
-              configuration replacing the current contents.</li>
+              <li>On successful completion of step 1, the private candidate configuration 
+              is copied into the running configuration replacing the current contents.</li>
             </ol>
+            <section anchor="section_updates_to_commit_confirmed">
+              <name>Interactions with commit confirmed operations and private candidates</name>
+              <t>Nothing in this document alters the behaviour of the &lt;confirmed&gt;, 
+              &lt;persist&gt; or &lt;persist-id&gt; parameters and these MUST work when using the 
+              a private candidate configuration if the :confirmed-commit capability is 
+              advertised.</t>
+              <t>When a private candidate is committed using the &lt;confirmed/&gt; parameter and
+              the commit operation disconnects the client's session, the configuration in the 
+              running configuration is immediately reverted and the proposed client changes 
+              are discarded.</t>
+              <t>When a private candidate is committed using the &lt;confirmed/&gt; parameter and
+              the commit operation does not disconnect the client's session, and subsequently, the 
+              commit operation is either cancelled using the &lt;cancel-commit&gt; operation or 
+              the timeout expires, the running configuration is reverted and the proposed 
+              client changes are returned to the client's private candidate.</t>
+              <t>If a private candidate is committed using the &lt;confirmed/&gt; parameter 
+              and the &lt;persist&gt; parameter is provided, and the client subsequently 
+              disconnects its session for any reason whilst the timer is running, upon 
+              cancellation using the &lt;cancel-commit&gt; operation or on the expiry of 
+              the timer, the running configuration will be reverted, and the proposed client 
+              changes are discarded.</t>
+            </section>
+          </section>
+          <section anchor="section_updates_to_get_config">
+            <name>&lt;get-config&gt;</name>
+          </section>
+          <section anchor="section_updates_to_edit_config">
+            <name>&lt;edit-config&gt;</name>
+          </section>
+          <section anchor="section_updates_to_get_data">
+            <name>&lt;get-data&gt;</name>
+          </section>
+          <section anchor="section_updates_to_edit_data">
+            <name>&lt;edit-data&gt;</name>
           </section>
           <section anchor="section_updates_to_compare">
             <name>&lt;compare&gt;</name>
@@ -978,33 +1010,18 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
             or &lt;delete-config&gt; operations may be used.</t>
           </section>
           <section>
-            <name>&lt;commit&gt;</name>
-            <t>The &lt;commit&gt; operation MUST trigger an implicit &lt;update&gt; operation,
-            with the resolution-mode of revert-on-conflict, immediately before copying the 
-            private candidate configuration into the running configuration.</t>
-            <section>
-              <name>Interactions with commit confirmed operations and private candidates</name>
-              <t>Nothing in this document alters the behaviour of the &lt;confirmed&gt;, 
-              &lt;persist&gt; or &lt;persist-id&gt; parameters and these MUST work when using the 
-              a private candidate configuration if the :confirmed-commit capability is 
-              advertised.</t>
-              <t>When a private candidate is committed using the &lt;confirmed/&gt; parameter and
-              the commit operation disconnects the client's session, the configuration in the 
-              running configuration is immediately reverted and the proposed client changes 
-              are discarded.</t>
-              <t>When a private candidate is committed using the &lt;confirmed/&gt; parameter and
-              the commit operation does not disconnect the client's session, and subsequently, the 
-              commit operation is either cancelled using the &lt;cancel-commit&gt; operation or 
-              the timeout expires, the running configuration is reverted and the proposed 
-              client changes are returned to the client's private candidate.</t>
-              <t>If a private candidate is committed using the &lt;confirmed/&gt; parameter 
-              and the &lt;persist&gt; parameter is provided, and the client subsequently 
-              disconnects its session for any reason whilst the timer is running, upon 
-              cancellation using the &lt;cancel-commit&gt; operation or on the expiry of 
-              the timer, the running configuration will be reverted, and the proposed client 
-              changes are discarded.</t>
-            </section>
+            <name>&lt;get&gt;</name>
+            <t>The &lt;get&gt; operation does not accept a datastore value and therefore
+              this document is not applicable to this operation.  The use of the
+              get operation will not create a private candidate configuration.</t>
           </section>
+          <section>
+                <name>&lt;cancel-commit&gt;</name>
+                <t>The &lt;cancel-commit&gt; operation is unchanged.  Any changes made to the running
+                configuration are returned to the private candidate if it still exists. See 
+                <xref target="section_updates_to_commit_confirmed"/> for further details.</t>
+          </section>
+
         </section>
       </section>
     </section>
@@ -1040,21 +1057,6 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
         <name>Informative References</name>
       </references>
     </references>
-    <section>
-      <name>Behaviour with unaltered NETCONF operations</name>
-      <section>
-        <name>&lt;get&gt;</name>
-        <t>The &lt;get&gt; operation does not accept a datastore value and therefore
-          this document is not applicable to this operation.  The use of the
-          get operation will not create a private candidate configuration.</t>
-      </section>
-      <section>
-            <name>&lt;cancel-commit&gt;</name>
-            <t>The &lt;cancel-commit&gt; operation is unchanged.  Any changes made to the running
-            configuration are returned to the private candidate if it still exists.</t>
-      </section>
-    </section>
-    
     <section>
       <name>YANG modules</name>
       <section>
