@@ -484,11 +484,6 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           list.</t>
           <t>If a server implements the transaction ID feature then this MAY be considered
           as part of detecting a conflict.</t>
-          <t>When a conflict is identified that node is marked by the server as "in conflict"
-          in the private candidate.  This "in conflict" status does not propagate back up 
-          the tree to the parent node(s).  Each node in the ancestral tree is evaluated 
-          as in conflict or otherwise on its own merits.  The "in conflict" marker 
-          remains until the conflict is resolved on that node.</t>
           <t>Examples of conflicts include:</t>
           <ul>
             <li>An interface has been deleted in the running configuration that existed
@@ -502,7 +497,7 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           </ul>
         </section>
         <section>
-          <name>Detecting and reporting conflicts</name>
+          <name>Detecting and reporting conflicts</name> 
           <t>A conflict can occur when an &lt;update&gt; operation is triggered.  This
             can occur in a number of ways:</t>
           <ul>
@@ -511,6 +506,11 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
               operation, such as when a &lt;commit&gt; operation is performed by the 
               client in the private candidate session.</li>
           </ul>
+          <t>When a conflict is identified that node is marked by the server as "in conflict"
+          in the private candidate.  This "in conflict" status does not propagate back up 
+          the tree to the parent node(s).  Each node in the ancestral tree is evaluated 
+          as in conflict or otherwise on its own merits.  The "in conflict" marker 
+          remains until the conflict is resolved on that node.</t>
           <t>When a conflict occurs:</t>
           <ul>
           <li>The client MUST be given the opportunity to re-evaluate its intent based 
@@ -544,10 +544,16 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           those from the private candidate configuration.</t>
           <t>When a conflict is detected in any client-triggered activity, the client 
           MUST be informed.  The client then has a number of options available to 
-          resolve the conflict.</t>
-          <t>An &lt;update&gt; operation uses the resolution method specified in the
-          request, or the system resolution mode in specific circumstances.  
-          The &lt;update&gt; operation is discussed later in this document.</t>
+          resolve the conflict:</t>
+          <ul>
+          <li>Edit the candidate configuration nodes marked as "in conflict".  When a node
+          marked as "in conflict" is subsequently edited the "in conflict" marker on that 
+          node is removed.</li>
+          <li>Issue an &lt;update&gt; operation with a specific resolution-mode.</li>
+          </ul>
+          <t>The &lt;update&gt; operation uses the resolution-mode specified in the 
+          request, or the system resolution mode in specific circumstances, to resolve 
+          the conflicts. The &lt;update&gt; operation is discussed later in this document.</t>
           <t>The following configuration data is used below to illustrate the behaviour
           of each resolution method:</t>
           <sourcecode type="xml">
