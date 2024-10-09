@@ -107,9 +107,10 @@
       <section>
         <name>Updates to RFC 6241 and RFC 8526</name>
         <t>This document updates <xref target="RFC6241"/> to describe how 
-          the &lt;edit-config&gt;, &lt;copy-config&gt;, &lt;get-config&gt;,
-          &lt;commit&gt;, &lt;delete-config&gt;, &lt;discard-changes&gt;,
-          &lt;lock&gt; and &lt;unlock&gt; operations work with a private 
+          the &lt;edit-config&gt;, &lt;copy-config&gt;, &lt;get&gt;, 
+          &lt;get-config&gt;, &lt;commit&gt;, &lt;cancel-commit&gt;, 
+          &lt;delete-config&gt;, &lt;discard-changes&gt;, &lt;lock&gt; 
+          and &lt;unlock&gt; operations work with a private 
           candidate datastore.  These updates are described in
           <xref target="section_updated_netconf_operations"/>.  This
 	        document also adds a new &lt;update&gt; operation, described in
@@ -960,15 +961,29 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           </section>
           <section anchor="section_updates_to_get_config">
             <name>&lt;get-config&gt;</name>
+            <t>Performing a &lt;get-config&gt; operation with the candidate configuration datastore
+            as the source, the configuration from the private candidate will be returned.  If no
+            private candidate configuration has been created, one will be created at this point.</t>
           </section>
           <section anchor="section_updates_to_edit_config">
             <name>&lt;edit-config&gt;</name>
+            <t>Performing an &lt;edit-config&gt; operation with the candidate configuration datastore
+            as the target, the changes will be placed into the private candidate configuration
+            datastore.  If no private candidate configuration has been created, one will be 
+            created at this point.</t>
           </section>
           <section anchor="section_updates_to_get_data">
             <name>&lt;get-data&gt;</name>
+            <t>Performing a &lt;get-data&gt; operation with the candidate configuration datastore
+            as the datastore, the configuration from the private candidate will be returned.  If no
+            private candidate configuration has been created, one will be created at this point.</t>
           </section>
           <section anchor="section_updates_to_edit_data">
             <name>&lt;edit-data&gt;</name>
+            <t>Performing an &lt;edit-data&gt; operation with the candidate configuration datastore
+            as the datastore, the changes will be placed into the private candidate configuration
+            datastore.  If no private candidate configuration has been created, one will be 
+            created at this point.</t>
           </section>
           <section anchor="section_updates_to_compare">
             <name>&lt;compare&gt;</name>
