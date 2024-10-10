@@ -330,11 +330,9 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           <t>When a server receives the client capability its mode of operation
           will be set to private candidate mode for the duration of the NETCONF
           session.</t>
-          <t>All RPC requests that target the candidate configuration datastore
-          will operate in exactly the same way as they would do when using the
-          shared candidate configuration datastore, however, when the server
-          receives a request to act upon the candidate configuration datastore it
-          instead uses the session's private candidate configuration datastore.</t>
+          <t>All RPC requests that target or impact the shared candidate configuration 
+          datastore will implicitly target or impact the session's private candidate 
+          configuration datastore instead, and operate in exactly the same way.</t>
           <t>Using this method, the use of private candidates can be made available 
           to NMDA and non-NMDA capable servers.</t>
         </section>
