@@ -886,9 +886,8 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           <name>New NETCONF operations</name>
           <section>
             <name>&lt;update&gt;</name>
-            <t>The &lt;update&gt; operation is provided to allow NETCONF clients
-                (or servers) to trigger a rebase of the private candidate configuration
-                    against the running configuration.</t>
+            <t>The &lt;update&gt; operation triggers a rebase of the 
+            private candidate configuration against the running configuration.</t>
             <t>The &lt;update&gt; operation may be triggered manually by the
                 client or automatically by the server.</t>
             <t>The &lt;update&gt; operation is atomic.  This means that the entire &lt;update&gt;
