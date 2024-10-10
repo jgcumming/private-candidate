@@ -1174,10 +1174,11 @@ module ietf-netconf-private-candidate {
             if-feature "private-candidate";
             description
                 "When this leaf is provided and the source or
-                destination are the private-candidate datastore,
-                the comparison will either occur between the
-                last-update point of the private candidate or the
-                creation-point of the private candidate.";
+                destination is the candidate datastore, operating
+                in private candidate mode, the comparison will 
+                either occur between the last-update point of 
+                the private candidate or the creation-point of 
+                the private candidate.";
             default last-update;
             type enumeration {
                 enum last-update;
