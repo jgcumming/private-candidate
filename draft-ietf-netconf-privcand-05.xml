@@ -1009,8 +1009,8 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
             private candidate configuration at the time it was last updated using the &lt;update&gt; 
             NETCONF operation described in this document (whether automatically or manually triggered).</t>
             <t>The creation-point selection of &lt;reference-point&gt; will provide an output
-            comparing the current private candidate configuration with the same
-            private candidate configuration at the time this private candidate was initially created.</t>
+            comparing the current private candidate configuration datastore with the same
+            private candidate configuration datastore at it was first created.</t>
           </section>
           </section>
           <section>
