@@ -340,11 +340,12 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
         </section>
         <section>
           <name>RESTCONF client</name>
-	  <t>RESTCONF does not provide a mechanism for the client to advertise a capability
-    Therefore when a RESTCONF server advertises the :private-candidate capability, and the client
-         references the "{+restconf}/data" resource described in
-         <xref target="RFC8040" sectionFormat="of" section="3.3.1" />,
-         all edits are made to the client's private candidate, and the private candidate
+	  <t>RESTCONF does not provide a mechanism for the client to advertise a capability.
+    Therefore when a RESTCONF server advertises the :private-candidate capability, all
+         client requests will use a private candidate when the client references
+         the "{+restconf}/data" resource described in
+         <xref target="RFC8040" sectionFormat="of" section="3.3.1" />.
+         All edits are made to the client's private candidate, and the private candidate
          is automatically committed.</t>
         <t>This ensures backwards compatibility with RESTCONF clients that are not aware of
          private candidates, because those clients will expect their changes to be
@@ -991,6 +992,18 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
             comparing the current private candidate configuration with the same
             private candidate configuration at the time this private candidate was initially created.</t>
           </section>
+          </section>
+          <section>
+            <name>&lt;lock&gt;</name>
+            <t>The behaviour of the &lt;lock&gt; operation is updated such that
+            locking the candidate configuration datastore will lock that session's private
+            candidate configuration datastore only.</t>
+          </section>
+          <section>
+            <name>&lt;unlock&gt;</name>
+            <t>The behaviour of the &lt;unlock&gt; operation is updated such that
+            unlocking the candidate configuration datastore will unlock that session's private
+            candidate configuration datastore only.</t>
           </section>
           <section>
             <name>&lt;delete-config&gt;</name>
