@@ -89,10 +89,10 @@
 		 is, in many situations, also undesirable.  <br/><br/>
 
 		 Many network devices support candidate configurations within the CLI interface, 
-     where a user (machine or otherwise) is able to edit a personal copy of a device's 
+     where a user (machine or otherwise) is able to edit a self-contained copy of a device's 
      configuration without blocking other users from doing so.<br/><br/>
 	 
-	     This document details the extensions to the NETCONF protocol in order to support
+	     This document specifies the extensions to the NETCONF protocol in order to support
 	     the use of private candidates.  It also describes how the RESTCONF protocol can be
 	     used on a system that implements private candidates.</t>
       <section>
