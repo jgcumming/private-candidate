@@ -1,0 +1,9 @@
+module: ietf-netconf-private-candidate
+
+  augment /cmp:compare/cmp:input:
+    +--rw reference-point?   enumeration {private-candidate}?
+
+  rpcs:
+    +---x update {private-candidate}?
+       +---w input
+          +---w resolution-mode?   enumeration
