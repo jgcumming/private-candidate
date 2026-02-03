@@ -147,6 +147,7 @@
               the change to item A and, if they had been aware, may have decided not to proceed.
             </t>
           </section>
+          </section>
           <section>
             <name>Mitigation strategies when using a shared candidate datastore</name>
             <section>
@@ -177,7 +178,7 @@
               at the point they commit the activity.</t>
             </section>
             <section>
-              <name>Fine-grained locking</name>
+              <name>Fine-grained (partial) locking</name>
               <t><xref target="RFC5717"/> describes a partial lock mechanism that
                 can be used on specific portions of the shared candidate datastore.</t>
               <t>Partial locking does not solve the issues of staging a set of
@@ -190,7 +191,7 @@
               <t>Finally, partial locking is not widely implemented.</t>
             </section>
           </section>
-        </section>
+  
       </section>
     </section>
     <section>
@@ -203,13 +204,13 @@
           have only one per system.
         </t>
       </section>
-      <section>
+      <section anchor="definition_shared_candidate">
         <name>Shared candidate configuration</name>
         <t>The candidate configuration datastore defined in
           <xref target="RFC6241"/> is referenced as the shared candidate
           configuration in this document.</t>
       </section>
-      <section>
+      <section anchor="definition_private_candidate">
         <name>Private candidate configuration</name>
         <t>A private candidate configuration is a session specific candidate
           configuration datastore.</t>
@@ -227,7 +228,7 @@
           configuration datastore as defined in <xref target="RFC6241"/>).
           When the private candidate datastore is in use, any operations that target
           the &lt;candidate&gt; configuration datastore (for example, &lt;edit-config&gt; and &lt;edit-data&gt; operations)
-          actually make changes to the private candidate datastore.</t>
+          actually make changes to the private candidate datastore instead of the shared candidate configuration datastore.</t>
         <t>Obtaining this private candidate over NETCONF or RESTCONF will display the entire
           configuration, including all changes made to it.  Performing a &lt;commit&gt; 
           operation will merge the changes from the private candidate into the running 
@@ -264,7 +265,7 @@
          the entire duration of the NETCONF session.</t>
       <section>
         <name>What is a private candidate</name>
-        <t>A private candidate is defined earlier in the definitions and terminology
+        <t>A private candidate is defined in the <xref target="definition_private_candidate">definitions and terminology</xref>
           section of this document.</t>
       </section>
       <section anchor="section_when_created">
@@ -352,7 +353,8 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
           <ul>
           <li>Ignore the capability and continue with the session without the use of 
           private candidates (this ensures backwards compatibility with older servers).</li>
-          <li>Close the session as the requested functionality cannot be provided.</li>
+          <li>Close the session as the requested functionality cannot be provided. New 
+          clients and servers implementing private candidate support should use this option.</li>
           </ul>
           <t>When a server receives the client capability its mode of operation
           will be set to private candidate mode for the duration of the NETCONF
@@ -426,8 +428,8 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
         <ul>
         <li>The client requests that the private candidate be refreshed using a new &lt;update&gt;
         operation</li>
-        <li>&lt;commit&gt; is issued (which MUST automatically issue an &lt;update&gt; operation 
-        immediately prior to committing the configuration)</li>
+        <li>&lt;commit&gt; is issued from the private candidate (which MUST automatically issue an 
+        &lt;update&gt; operation for that private candidate immediately prior to committing the configuration)</li>
         <li>An implementation chooses to perform an &lt;update&gt; operation after a change to
         the running configuration by any other client.</li>
         </ul>
@@ -435,17 +437,18 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
         sync with the running configuration should the private candidate be open for a long time,
         however, most NETCONF configuration activities (between the first 
         &lt;edit-config&gt;/&lt;edit-data&gt; and a &lt;commit&gt;) are short-lived.</t>
-        <t>An implementation may choose, optionally, to automatically perform an &lt;update&gt; 
-        operation on each private candidate configuration datastore after a change to the running 
-        configuration from another client.  In this situation, the client will be unaware of 
-        these changes to its private candidate configuration datastore, and issuing a manual 
-        &lt;update&gt; operation will be a no-op.</t>
-        <t>A <xref target="RFC9144">&lt;compare&gt;</xref> operation MAY be performed against:</t>
+        <t>The provide visibility into the deviations between the private candidate configuration
+        datastore a <xref target="RFC9144">&lt;compare&gt;</xref> operation MAY be performed against:</t>
         <ul>
         <li>The initial creation point of the private candidate's branch</li>
         <li>Against the last update point of the private candidate's branch</li>
         <li>Against the running configuration</li>
         </ul>
+        <t>An implementation may choose, optionally, to automatically perform an &lt;update&gt; 
+        operation on each private candidate configuration datastore after a change to the running 
+        configuration from another client.  In this situation, the client will be unaware of 
+        these changes to its private candidate configuration datastore, and issuing a manual 
+        &lt;update&gt; operation will be a no-op.</t>
       </section>
       <section>
         <name>Detecting and resolving conflicts</name>
