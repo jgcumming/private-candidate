@@ -1072,6 +1072,12 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
       <name>IANA Considerations</name>
       <t>This document requests the registration the the following NETCONF capabilities:</t>
       <ul><li>urn:ietf:params:netconf:capability:private-candidate:1.0 (Version 1.0)</li></ul>
+      <t>This document also requests the registration of the following YANG modules in the
+      YANG Module Names registry and in the IETF XML:</t>
+      <ul>
+        <li>ietf-netconf-private-candidate</li>
+        <li>ietf-netconf-private-candidate-compare</li>
+      </ul>
     </section>
     <section anchor="Security">
       <!-- All drafts are required to have a security considerations section. See RFC 3552 for a guide. -->
