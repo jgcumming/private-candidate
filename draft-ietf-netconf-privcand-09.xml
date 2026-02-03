@@ -26,7 +26,7 @@
       docName="draft-ietf-netconf-privcand-09" 
       ipr="trust200902" 
       obsoletes="" 
-      updates="6241,8342,8526,9144" 
+      updates="6241,8526,9144" 
       submissionType="IETF" 
       xml:lang="en" 
       version="3"
