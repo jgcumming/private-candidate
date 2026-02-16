@@ -85,7 +85,7 @@
 		 
 		 NETCONF provides a way to mitigate this behaviour by allowing clients
 		 to place a lock on the shared candidate.  This lock prevents other clients from
-		 making changes until the holder releases it, but this behaviour
+		 making changes until the lock is released, but this behaviour
 		 is, in many situations, also undesirable.  <br/><br/>
 
 		 Many network devices support candidate configurations within the CLI interface, 
