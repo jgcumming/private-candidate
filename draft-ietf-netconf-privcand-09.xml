@@ -437,7 +437,7 @@ urn:ietf:params:netconf:capability:private-candidate:1.0
         sync with the running configuration should the private candidate be open for a long time,
         however, most NETCONF configuration activities (between the first 
         &lt;edit-config&gt;/&lt;edit-data&gt; and a &lt;commit&gt;) are short-lived.</t>
-        <t>The provide visibility into the deviations between the private candidate configuration
+        <t>To provide visibility into the differences between the private candidate configuration
         datastore a <xref target="RFC9144">&lt;compare&gt;</xref> operation MAY be performed against:</t>
         <ul>
         <li>The initial creation point of the private candidate's branch</li>
